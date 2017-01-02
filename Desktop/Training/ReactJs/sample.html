@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My First React Example</title>
+     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script src="https://fb.me/react-15.0.0.js"></script>
+    <script src="https://fb.me/react-dom-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+    <script type="text/babel">
+
+    class App extends React.Component{
+      constructor(props){
+        super(props);
+        this.state={
+          sname:'',
+          semail:'',
+          sphone:'',
+          simgtxt:'',
+          tables:[],
+          editing:false,
+          del: false,
+          splIndex: 0,
+          file: '',
+          imagePreviewUrl: '',
+          imagePreview: '',
+        }
+        this.process=this.process.bind(this);
+        this.update=this.update.bind(this);
+        this.remo=this.remo.bind(this);
+        this.editf=this.editf.bind(this);
+        this.save=this.save.bind(this);
+        this.cancel=this.cancel.bind(this);
+      }
+
+      process(e){
+          e.preventDefault();
+          var newtable=this.state.tables; 
+          newtable.push({name:this.state.sname,email:this.state.semail,phone:this.state.sphone,imgtxt:this.state.file.name});
+          this.setState({tables:newtable});
+          console.log(this.state.tables);
+          this.setState({sname:""});
+          this.setState({semail:""});
+          this.setState({sphone:""});
+          this.setState({simgtxt:""});
+        }
+
+        update(e){
+          
+          
+          this.setState({ [e.target.name] :e.target.value});
+           console.log({[e.target.name] :e.target.value});
+        }
+
+        remo(num){ 
+        this.setState({del:true});
+        this.state.tables.splice(num, 1);
+        this.setState({tables:this.state.tables});
+        this.setState({sname:""});
+          this.setState({semail:""});
+          this.setState({sphone:""});
+          this.setState({simgtxt:""});
+          console.log("table",this.state.tables);
+          }
+
+        editf(ind){
+          this.setState({editing:true});
+          this.setState({del:false});
+          console.log(this.state.tables);
+          this.setState({sname:this.state.tables[ind].name}); 
+          this.setState({semail:this.state.tables[ind].email}); 
+          this.setState({sphone:this.state.tables[ind].phone}); 
+          this.setState({simgtxt:this.state.tables[ind].imgtxt}); 
+          console.log(this.state.tables[ind].imgtxt);
+          this.state.splIndex=ind;
+          
+        }
+
+        save(){
+          this.setState({editing:false});
+          var newIndex=this.state.splIndex;
+
+          this.state.tables[newIndex].name=this.state.sname;
+          this.state.tables[newIndex].email=this.state.semail;
+          this.state.tables[newIndex].phone=this.state.sphone;
+          this.state.tables[newIndex].imgtxt=this.state.simgtxt;
+
+          this.setState({sname:""});
+          this.setState({semail:""});
+          this.setState({sphone:""});
+          this.setState({simgtxt:""});
+
+
+
+          console.log(this.state.tables);
+
+        }
+
+        cancel(){
+          this.setState({editing:false});
+          this.setState({sname:""});
+          this.setState({semail:""});
+          this.setState({sphone:""});
+          this.setState({simgtxt:""});
+           console.log(this.state.tables);
+
+        }
+        handleImageChange(e) {
+        e.preventDefault();
+
+        let reader = new FileReader();
+        let file = e.target.files[0];
+
+        reader.onloadend = () => {
+          this.setState({
+            file: file,
+            imagePreviewUrl: reader.result
+          });
+        }
+        
+        reader.readAsDataURL(file)
+
+      }
+
+
+      render(){
+        let {imagePreviewUrl} = this.state;
+        let imagePreview = this.state;
+        if (imagePreviewUrl) {
+          imagePreview = (<img src={imagePreviewUrl}  height="60px" width="100px" />);
+        } else {
+          imagePreview = (<div className="previewText"></div>);
+        }
+
+        if(this.state.editing){
+        var btnChange =<div><button className="btn btn-warning" onClick={this.save}>Update</button><button className="btn btn-info" onClick={this.cancel}>Cancel</button></div>
+
+        }
+        else{
+        var btnChange = <input type="submit" value="Submit" className="btn btn-primary"/>
+        
+        }if(this.state.del){
+          var btnChange = <input type="submit" value="Submit" className="btn btn-primary"/> 
+        }
+    
+
+               return (
+        <div>
+            <form className="board" onSubmit={(e)=>this.process(e)}>
+             <table> 
+             <tbody>
+             <tr>
+             <td><label>Name :</label> </td><td><input type="text" ref="uname" name="sname" placeholder="Name"  value={this.state.sname} onChange={this.update} required="required"  /></td>
+             </tr>
+              <tr><td><label>E-mail Id :</label> </td><td><input type="email" ref="email" name="semail" placeholder="Email" value={this.state.semail} onChange={this.update} required="required"/>
+             </td>
+             </tr>
+             <tr>
+              <td><label>Contact :</label> </td><td><input type="text" ref="phone" name="sphone" placeholder="Phone" value={this.state.sphone} onChange={this.update} required="required"/></td>
+              </tr>
+             <tr><td><label>Image file :</label> </td><td><input ref="simgtxt" name="simgtxt" type="file" onInput={this.update} onChange={(e)=>this.handleImageChange(e)}/></td><td><div className ="imagePreview">{imagePreview}</div></td></tr>
+              <tr><td></td><td>{btnChange}</td></tr>
+              </tbody>
+              </table>
+            </form>
+
+           <table className="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Contact</th>
+                            <th>Image File</th>
+                        </tr>
+                    </thead>
+            <tbody>
+             { 
+
+               this.state.tables.map(function(tableRow, index) {
+                  return (
+                    <tr key={'row' + index} id={index}>
+                      <td>{tableRow.name}</td>   
+                      <td>{tableRow.email}</td>
+                       <td>{tableRow.phone}</td>
+                       <td><div className ="imagePreview"><img src={tableRow.imgtxt} height="60px" width="100px" /></div></td>
+                       <td><button onClick={()=>this.editf(index)} className="btn btn-success">Edit</button></td>
+                       <td><button onClick={()=>this.remo(index)}  className="btn btn-danger">Delete</button></td>
+                    </tr>
+                    );
+                },this)            
+              }
+            </tbody>
+          </table>
+
+            </div>
+        );
+      }
+
+    }
+
+    ReactDOM.render(<App/>,document.getElementById('app'));
+
+    </script>
+  </body>
+</html>

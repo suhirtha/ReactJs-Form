@@ -1,0 +1,22 @@
+.board{
+	height:350px;
+	width:750px;
+	position: relative;
+	margin:0 auto;
+	background-color: #9db6e0;
+	padding:3em;
+}
+.table{
+	width:750px;
+	margin:0 auto;
+}
+.imgPreview, .previewText{
+	max-height:60px;
+	max-width:70px;
+	border: 1px solid #000;
+
+}
+.imgPreview img{
+	height:100%;
+	width:100%;
+}
